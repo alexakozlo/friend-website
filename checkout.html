@@ -14,7 +14,7 @@
     <symbol id="moon" viewBox="0 0 32 32"><path d="M20 4a12 12 0 1 0 8 20A10 10 0 0 1 20 4z"/></symbol>
   </svg>
 
-  <div class="announcement">The most delicate soft launch &nbsp;☾&nbsp; Welcome</div>
+  <div class="announcement">One-of-a-kind handbags &nbsp;☾&nbsp; Made from upcycled materials</div>
 
   <header class="site-header">
     <div class="container nav">
@@ -39,7 +39,7 @@
         <div class="order-head">
           <p class="eyebrow">Checkout</p>
           <h2>Complete your order</h2>
-          <p class="order-intro">Once we receive your order we'll email you to confirm the details and arrange payment. Nothing is charged today.</p>
+          <p class="order-intro">Once we receive your order we'll email you to confirm your bag is reserved and arrange payment. Nothing is charged today, and we never ask for card details on this page.</p>
         </div>
 
         <div id="checkout-empty" class="cart-empty page" hidden>
@@ -161,6 +161,7 @@
       <div>
         <h4>Follow</h4>
         <a href="https://www.instagram.com/moonmade___/" target="_blank" rel="noopener">Instagram</a>
+        <a href="mailto:info@moon-made.ca">info@moon-made.ca</a>
       </div>
     </div>
     <div class="container footer-bottom">
@@ -188,17 +189,14 @@
       document.querySelector('.order-head').hidden = empty;
       if (empty) return;
 
-      document.getElementById('summary-lines').innerHTML = Cart.lines().map(line => `
+      document.getElementById('summary-lines').innerHTML = Cart.lines().map(p => `
         <div class="summary-line">
-          <div class="summary-thumb">
-            ${Cart.productImage(line.product, 'cart-thumb')}
-            <span class="badge">${line.qty}</span>
-          </div>
+          <div class="summary-thumb">${Cart.productImage(p, 'cart-thumb')}</div>
           <div>
-            <p class="cart-line-name">${Cart.escape(line.product.name)}</p>
-            <p class="variant">${Cart.escape(line.colour)}</p>
+            <p class="cart-line-name">${Cart.escape(p.name)}</p>
+            <p class="variant">One of a kind</p>
           </div>
-          <p>${line.product.price > 0 ? Cart.formatPrice(line.product.price * line.qty) : 'TBC'}</p>
+          <p>${p.price > 0 ? Cart.formatPrice(p.price) : 'TBC'}</p>
         </div>`).join('');
       document.getElementById('summary-subtotal').textContent = Cart.subtotalText();
     }
@@ -233,7 +231,7 @@
       if (Cart.count() === 0) return;
 
       if (!ORDER_EMAIL) {
-        showError('Online ordering isn\'t switched on yet. Please message us on <a href="https://www.instagram.com/moonmade___/" target="_blank" rel="noopener">Instagram</a> to order.');
+        showError('Online ordering isn\'t switched on yet. Please email <a href="mailto:info@moon-made.ca">info@moon-made.ca</a> to order.');
         return;
       }
 
@@ -244,8 +242,8 @@
         for (const k of ['address', 'city', 'region', 'postal', 'country']) delete data[k];
       }
 
-      const itemsText = Cart.lines().map(l =>
-        `${l.qty} × ${l.product.name} (${l.colour})` + (l.product.price > 0 ? ` — ${Cart.formatPrice(l.product.price * l.qty)}` : '')
+      const itemsText = Cart.lines().map(p =>
+        p.name + (p.price > 0 ? ` — ${Cart.formatPrice(p.price)}` : '')
       ).join('\n');
 
       const payload = {
@@ -279,7 +277,7 @@
         document.getElementById('order-success').hidden = false;
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (err) {
-        showError('Sorry, something went wrong sending your order. Please try again, or message us on <a href="https://www.instagram.com/moonmade___/" target="_blank" rel="noopener">Instagram</a>.');
+        showError('Sorry, something went wrong sending your order. Please try again, or email us at <a href="mailto:info@moon-made.ca">info@moon-made.ca</a>.');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Place order';
       }

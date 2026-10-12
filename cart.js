@@ -1,16 +1,19 @@
 // ---- MoonMade cart ----
-// Draws the shop grid (from products.js), runs the slide-out cart and remembers the cart between pages.
+// Draws the shop grid (from products.js), shows a bag's details when it's clicked,
+// runs the slide-out cart and remembers the cart between pages.
+// Every bag is one of a kind, so the cart holds at most one of each.
 // Needs products.js to be loaded first.
 
 const Cart = (() => {
   const STORAGE_KEY = 'moonmade-cart';
   const MOON = '<svg><use href="#moon"/></svg>';
-  let items = load();
+  let items = load(); // a list of bag ids
 
   function load() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-      return saved.filter(i => findProduct(i.id)); // drop bags that no longer exist
+      const ids = saved.map(i => (typeof i === 'string' ? i : i.id)); // older carts saved objects
+      return [...new Set(ids)].filter(id => isAvailable(findProduct(id))); // drop bags that are gone or sold
     } catch {
       return [];
     }
@@ -23,6 +26,10 @@ const Cart = (() => {
 
   function findProduct(id) {
     return PRODUCTS.find(p => p.id === id);
+  }
+
+  function isAvailable(p) {
+    return Boolean(p) && !p.sold;
   }
 
   function escape(text) {
@@ -42,16 +49,17 @@ const Cart = (() => {
   }
 
   // ---- Cart contents ----
-  function add(id, colour) {
-    const existing = items.find(i => i.id === id && i.colour === colour);
-    if (existing) existing.qty += 1;
-    else items.push({ id, colour, qty: 1 });
+  function has(id) {
+    return items.includes(id);
+  }
+
+  function add(id) {
+    if (!has(id) && isAvailable(findProduct(id))) items.push(id);
     save();
   }
 
-  function setQty(index, qty) {
-    if (qty < 1) items.splice(index, 1);
-    else items[index].qty = Math.min(qty, 20);
+  function remove(id) {
+    items = items.filter(i => i !== id);
     save();
   }
 
@@ -61,16 +69,15 @@ const Cart = (() => {
   }
 
   function count() {
-    return items.reduce((sum, i) => sum + i.qty, 0);
+    return items.length;
   }
 
   // Returns null if any bag in the cart doesn't have a price yet
   function subtotal() {
     let total = 0;
-    for (const i of items) {
-      const p = findProduct(i.id);
+    for (const p of lines()) {
       if (!(p.price > 0)) return null;
-      total += p.price * i.qty;
+      total += p.price;
     }
     return total;
   }
@@ -80,9 +87,16 @@ const Cart = (() => {
     return total === null ? 'To be confirmed' : formatPrice(total);
   }
 
-  // A list of the cart's lines with product details filled in, used by checkout
+  // The bags in the cart, used by checkout
   function lines() {
-    return items.map(i => ({ ...i, product: findProduct(i.id) }));
+    return items.map(findProduct);
+  }
+
+  // The small action under a bag: add it, show it's already in the cart, or mark it sold
+  function actionHTML(p, className) {
+    if (p.sold) return `<p class="sold-label">Sold</p>`;
+    if (has(p.id)) return `<button type="button" class="${className}" data-cart-open>In your cart</button>`;
+    return `<button type="button" class="${className}" data-add="${p.id}">Add to cart</button>`;
   }
 
   // ---- Shop grid ----
@@ -90,30 +104,55 @@ const Cart = (() => {
     const grid = document.getElementById('product-grid');
     if (!grid) return;
     grid.innerHTML = PRODUCTS.map(p => `
-      <article class="product" data-id="${p.id}">
-        ${productImage(p, 'product-img')}
+      <article class="product${p.sold ? ' is-sold' : ''}">
+        <button type="button" class="product-view" data-view="${p.id}" aria-label="View ${escape(p.name)}">
+          ${productImage(p, 'product-img')}
+          ${p.sold ? '<span class="sold-tag">Sold</span>' : ''}
+        </button>
         <div class="product-info">
-          <h3>${escape(p.name)}</h3>
+          <h3><button type="button" class="product-name" data-view="${p.id}">${escape(p.name)}</button></h3>
           <p class="price">${formatPrice(p.price)}</p>
-          <div class="swatches" role="radiogroup" aria-label="Colour">
-            ${p.colours.map((c, n) => `
-              <label class="swatch">
-                <input type="radio" name="colour-${p.id}" value="${escape(c)}"${n === 0 ? ' checked' : ''}>
-                <span>${escape(c)}</span>
-              </label>`).join('')}
-          </div>
-          <button type="button" class="button add-btn">Add to cart</button>
+          ${actionHTML(p, 'link-btn add-link')}
         </div>
       </article>`).join('');
+  }
 
-    grid.addEventListener('click', e => {
-      const btn = e.target.closest('.add-btn');
-      if (!btn) return;
-      const card = btn.closest('.product');
-      const colour = card.querySelector('input[type=radio]:checked').value;
-      add(card.dataset.id, colour);
-      open();
-    });
+  // ---- Bag details pop-up ----
+  function buildDialog() {
+    document.body.insertAdjacentHTML('beforeend', `
+      <dialog class="bag-dialog" id="bag-dialog" aria-label="Bag details">
+        <button type="button" class="drawer-close dialog-close" data-dialog-close aria-label="Close">&times;</button>
+        <div class="bag-detail" id="bag-detail"></div>
+      </dialog>`);
+    const dialog = document.getElementById('bag-dialog');
+    // Clicking the dark area around the pop-up closes it
+    dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); });
+  }
+
+  function renderDialog() {
+    const dialog = document.getElementById('bag-dialog');
+    if (!dialog || !dialog.open) return;
+    const p = findProduct(dialog.dataset.id);
+    document.getElementById('bag-detail').innerHTML = `
+      ${productImage(p, 'bag-detail-img')}
+      <div class="bag-detail-info">
+        <p class="eyebrow">One of a kind</p>
+        <h2>${escape(p.name)}</h2>
+        <p class="price">${formatPrice(p.price)}</p>
+        <p class="bag-description">${escape(p.description || '')}</p>
+        ${p.sold
+          ? '<p class="sold-label">This bag has found its home</p>'
+          : actionHTML(p, 'button add-btn')}
+        <p class="bag-note">Made by hand, one at a time. There is only one of this bag.</p>
+      </div>`;
+  }
+
+  function view(id) {
+    const dialog = document.getElementById('bag-dialog');
+    dialog.dataset.id = id;
+    dialog.showModal();
+    renderDialog();
+    dialog.querySelector('.dialog-close').focus();
   }
 
   // ---- Slide-out drawer ----
@@ -128,48 +167,31 @@ const Cart = (() => {
         <div class="drawer-body" id="cart-lines"></div>
         <div class="drawer-foot" id="cart-foot">
           <div class="subtotal"><span class="eyebrow">Subtotal</span><span id="cart-subtotal"></span></div>
-          <p class="drawer-note">Shipping and payment are confirmed by email after you order.</p>
+          <p class="drawer-note">Each bag is one of a kind. Shipping and payment are confirmed by email after you order.</p>
           <a href="checkout.html" class="button">Checkout</a>
         </div>
       </aside>`);
-
-    document.addEventListener('click', e => {
-      if (e.target.closest('[data-cart-open]')) { e.preventDefault(); open(); }
-      if (e.target.closest('[data-cart-close]')) close();
-      const qtyBtn = e.target.closest('[data-qty]');
-      if (qtyBtn) {
-        const index = Number(qtyBtn.dataset.index);
-        setQty(index, items[index].qty + Number(qtyBtn.dataset.qty));
-      }
-      const removeBtn = e.target.closest('[data-remove]');
-      if (removeBtn) setQty(Number(removeBtn.dataset.index), 0);
-    });
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
   }
 
-  function lineHTML(line, index) {
-    const p = line.product;
+  function lineHTML(p) {
     return `
       <div class="cart-line">
         ${productImage(p, 'cart-thumb')}
         <div class="cart-line-info">
           <p class="cart-line-name">${escape(p.name)}</p>
-          <p class="variant">${escape(line.colour)}</p>
-          <div class="qty">
-            <button type="button" data-qty="-1" data-index="${index}" aria-label="Decrease quantity">&minus;</button>
-            <span>${line.qty}</span>
-            <button type="button" data-qty="1" data-index="${index}" aria-label="Increase quantity">+</button>
-          </div>
+          <p class="variant">One of a kind</p>
         </div>
         <div class="cart-line-end">
-          <p>${p.price > 0 ? formatPrice(p.price * line.qty) : 'TBC'}</p>
-          <button type="button" class="link-btn" data-remove data-index="${index}">Remove</button>
+          <p>${p.price > 0 ? formatPrice(p.price) : 'TBC'}</p>
+          <button type="button" class="link-btn" data-remove="${p.id}">Remove</button>
         </div>
       </div>`;
   }
 
   function render() {
     for (const el of document.querySelectorAll('[data-cart-count]')) el.textContent = count();
+    renderGrid();
+    renderDialog();
 
     const linesEl = document.getElementById('cart-lines');
     if (!linesEl) return;
@@ -185,9 +207,10 @@ const Cart = (() => {
   }
 
   function open() {
+    closeDialog();
     document.getElementById('cart-drawer').setAttribute('aria-hidden', 'false');
     document.body.classList.add('cart-open');
-    document.querySelector('.drawer-close').focus();
+    document.querySelector('#cart-drawer .drawer-close').focus();
   }
 
   function close() {
@@ -195,11 +218,30 @@ const Cart = (() => {
     document.body.classList.remove('cart-open');
   }
 
+  function closeDialog() {
+    const dialog = document.getElementById('bag-dialog');
+    if (dialog && dialog.open) dialog.close();
+  }
+
+  // One click handler for every button the cart draws
+  document.addEventListener('click', e => {
+    const viewBtn = e.target.closest('[data-view]');
+    if (viewBtn) view(viewBtn.dataset.view);
+    const addBtn = e.target.closest('[data-add]');
+    if (addBtn) { add(addBtn.dataset.add); open(); }
+    if (e.target.closest('[data-cart-open]')) { e.preventDefault(); open(); }
+    if (e.target.closest('[data-cart-close]')) close();
+    if (e.target.closest('[data-dialog-close]')) closeDialog();
+    const removeBtn = e.target.closest('[data-remove]');
+    if (removeBtn) remove(removeBtn.dataset.remove);
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
   // Keep carts in sync if the site is open in two tabs
   window.addEventListener('storage', e => { if (e.key === STORAGE_KEY) { items = load(); render(); } });
 
   document.addEventListener('DOMContentLoaded', () => {
-    renderGrid();
+    buildDialog();
     buildDrawer();
     render();
   });
