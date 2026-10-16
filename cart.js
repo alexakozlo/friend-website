@@ -1,13 +1,45 @@
 // ---- MoonMade cart ----
-// Draws the shop grid (from products.js), shows a bag's details when it's clicked,
+// Loads the bags from products.json, draws the shop grid, shows a bag's details when it's clicked,
 // runs the slide-out cart and remembers the cart between pages.
 // Bags are made in small batches, so the cart never holds more of a bag than its stock.
-// Needs products.js to be loaded first.
 
 const Cart = (() => {
   const STORAGE_KEY = 'moonmade-cart';
   const MOON = '<svg><use href="#moon"/></svg>';
-  let items = load(); // a list of { id, qty }
+  // Where to centre the automatic square crop when a bag has no hand-made cover photo
+  const CROP = { top: '50% 15%', center: '50% 50%', bottom: '50% 85%' };
+  let PRODUCTS = [];
+  let items = []; // a list of { id, qty }
+
+  // ---- Loading the bags ----
+  // products.json is edited through the Pages CMS admin, so tidy up anything it might leave out
+  function cleanPath(path) {
+    return String(path).replace(/^\/+/, ''); // the site lives in a subfolder, so paths must not start with /
+  }
+
+  function slug(text) {
+    return String(text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  function tidy(raw, n) {
+    return {
+      ...raw,
+      id: raw.id || slug(raw.name) || 'bag-' + n,
+      name: raw.name || 'Untitled bag',
+      price: Number(raw.price) || 0,
+      stock: Number(raw.stock) || 0,
+      photos: [].concat(raw.photos || []).filter(Boolean).map(cleanPath),
+      cover: raw.cover ? cleanPath(raw.cover) : '',
+    };
+  }
+
+  async function loadProducts() {
+    // no-cache: always check for the latest stock and prices
+    const res = await fetch('products.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error(res.status);
+    const list = await res.json();
+    PRODUCTS = list.filter(p => p && !p.hidden).map(tidy);
+  }
 
   function load() {
     try {
@@ -49,17 +81,20 @@ const Cart = (() => {
     return n > 0 ? '$' + n.toFixed(2) : 'Price TBC';
   }
 
-  // The square cover photo (or the moon placeholder if there's no photo yet)
+  // The square cover photo (or the moon placeholder if there's no photo yet).
+  // Without a hand-made cover, the first photo is cropped to a square around the chosen crop position.
   function productImage(p, className) {
-    const src = p.cover || (p.photos && p.photos[0]);
-    return src
-      ? `<img class="${className}" src="${src}" alt="${escape(p.alt || p.name)}" loading="lazy">`
-      : `<div class="${className} placeholder">${MOON}</div>`;
+    if (p.cover) return `<img class="${className}" src="${p.cover}" alt="${escape(p.alt || p.name)}" loading="lazy">`;
+    if (p.photos[0]) {
+      const position = CROP[p.crop] || CROP.center;
+      return `<img class="${className}" src="${p.photos[0]}" alt="${escape(p.alt || p.name)}" loading="lazy" style="object-position: ${position}">`;
+    }
+    return `<div class="${className} placeholder">${MOON}</div>`;
   }
 
   // The pop-up's big photo, with small thumbnails underneath to switch between photos
   function galleryHTML(p, shown) {
-    const photos = p.photos || [];
+    const photos = p.photos;
     if (photos.length === 0) return productImage(p, 'bag-detail-img');
     const thumbs = photos.length > 1 ? `
       <div class="bag-thumbs">
@@ -295,9 +330,16 @@ const Cart = (() => {
   // Keep carts in sync if the site is open in two tabs
   window.addEventListener('storage', e => { if (e.key === STORAGE_KEY) { items = load(); render(); } });
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     buildDialog();
     buildDrawer();
+    try {
+      await loadProducts();
+    } catch {
+      const grid = document.getElementById('product-grid');
+      if (grid) grid.innerHTML = '<p class="shop-note">Sorry, the bags couldn\'t be loaded. Please refresh the page.</p>';
+    }
+    items = load();
     render();
   });
 

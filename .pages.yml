@@ -1,0 +1,69 @@
+# Settings for the MoonMade shop admin (Pages CMS: https://app.pagescms.org)
+# This turns products.json into a simple form for adding and editing bags.
+
+media:
+  input: images
+  output: images
+  extensions: [jpg, jpeg, png, webp]
+  rename: safe
+
+content:
+  - name: bags
+    label: Bags
+    type: file
+    path: products.json
+    format: json
+    list: true
+    fields:
+      - name: name
+        label: Bag name
+        type: string
+        required: true
+        description: Shown on the shop, e.g. "The Ivory Knot Bag".
+      - name: price
+        label: Price ($)
+        type: number
+        description: In Canadian dollars, e.g. 85. Use 0 while the price isn't decided (shows "Price TBC").
+      - name: stock
+        label: In stock
+        type: number
+        description: How many are available. Lower this after each sale. At 0 the bag shows as "Sold".
+      - name: description
+        label: Description
+        type: text
+        description: A few sentences shown when someone clicks the bag (materials, size, little details).
+      - name: photos
+        label: Photos
+        type: image
+        description: The first photo is shown first. Upload photos about 1200px wide (phone photos are fine, but large files load slowly).
+        options:
+          multiple:
+            max: 6
+      - name: crop
+        label: Shop photo position
+        type: select
+        description: The shop grid shows a square crop of the first photo. Pick where the bag is in that photo.
+        options:
+          values:
+            - name: top
+              label: Bag is near the top
+            - name: center
+              label: Bag is in the middle
+            - name: bottom
+              label: Bag is near the bottom
+      - name: cover
+        label: Square shop photo (optional)
+        type: image
+        description: A square photo cropped close on the bag. If set, it's used in the shop grid instead of cropping the first photo. Clear it to use the crop above.
+      - name: alt
+        label: Photo description
+        type: string
+        description: A short description of the bag for people using screen readers, e.g. "Black satin knot bag with white fringe".
+      - name: hidden
+        label: Hide from the shop
+        type: boolean
+        description: Turn on to keep a bag saved here without showing it on the website.
+      - name: id
+        label: ID
+        type: string
+        hidden: true

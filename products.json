@@ -1,0 +1,89 @@
+[
+  {
+    "id": "ivory",
+    "name": "The Ivory Knot Bag",
+    "price": 0,
+    "stock": 2,
+    "description": "A soft ivory satin wristlet with a knotted handle and a long, hand-knotted macramé fringe that sways as you move.",
+    "photos": [
+      "images/ivory-1.jpg",
+      "images/ivory-2.jpg"
+    ],
+    "cover": "images/ivory-cover.jpg",
+    "crop": "center",
+    "alt": "Ivory satin knot bag with a long knotted fringe",
+    "hidden": false
+  },
+  {
+    "id": "lavender",
+    "name": "The Lavender Blossom Bag",
+    "price": 0,
+    "stock": 2,
+    "description": "A pale lavender brocade wristlet woven with delicate blossoms, finished with a full black fringe.",
+    "photos": [
+      "images/lavender-1.jpg"
+    ],
+    "cover": "images/lavender-cover.jpg",
+    "crop": "center",
+    "alt": "Lavender floral brocade knot bag with black fringe",
+    "hidden": false
+  },
+  {
+    "id": "yellow",
+    "name": "The Golden Blossom Bag",
+    "price": 0,
+    "stock": 2,
+    "description": "A golden yellow satin brocade wristlet with black blossom branches, a knotted handle and a long black fringe.",
+    "photos": [
+      "images/yellow-1.jpg",
+      "images/yellow-2.jpg"
+    ],
+    "cover": "images/yellow-cover.jpg",
+    "crop": "center",
+    "alt": "Golden yellow floral brocade knot bag with black fringe",
+    "hidden": false
+  },
+  {
+    "id": "midnight",
+    "name": "The Midnight Fringe Bag",
+    "price": 0,
+    "stock": 2,
+    "description": "A glossy black satin wristlet with a knotted handle and a soft black fringe. Simple, elegant and goes with everything.",
+    "photos": [
+      "images/midnight-1.jpg"
+    ],
+    "cover": "images/midnight-cover.jpg",
+    "crop": "center",
+    "alt": "Black satin knot bag with black fringe",
+    "hidden": false
+  },
+  {
+    "id": "eclipse",
+    "name": "The Eclipse Bag",
+    "price": 0,
+    "stock": 2,
+    "description": "Black satin with a bright white fringe, like the edge of the moon in an eclipse. A wristlet with a knotted handle.",
+    "photos": [
+      "images/eclipse-1.jpg"
+    ],
+    "cover": "images/eclipse-cover.jpg",
+    "crop": "center",
+    "alt": "Black satin knot bag with white fringe",
+    "hidden": false
+  },
+  {
+    "id": "stardust",
+    "name": "The Stardust Bag",
+    "price": 0,
+    "stock": 2,
+    "description": "A black sequin wristlet that sparkles like a night sky, with a knotted handle and a fine black fringe.",
+    "photos": [
+      "images/stardust-1.jpg",
+      "images/stardust-2.jpg"
+    ],
+    "cover": "images/stardust-cover.jpg",
+    "crop": "center",
+    "alt": "Black sequin knot bag with black fringe",
+    "hidden": false
+  }
+]
