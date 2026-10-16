@@ -14,7 +14,7 @@
     <symbol id="moon" viewBox="0 0 32 32"><path d="M20 4a12 12 0 1 0 8 20A10 10 0 0 1 20 4z"/></symbol>
   </svg>
 
-  <div class="announcement">One-of-a-kind handbags &nbsp;☾&nbsp; Made from upcycled materials</div>
+  <div class="announcement">Handmade in small batches &nbsp;☾&nbsp; Made from upcycled materials</div>
 
   <header class="site-header">
     <div class="container nav">
@@ -189,14 +189,14 @@
       document.querySelector('.order-head').hidden = empty;
       if (empty) return;
 
-      document.getElementById('summary-lines').innerHTML = Cart.lines().map(p => `
+      document.getElementById('summary-lines').innerHTML = Cart.lines().map(({ product: p, qty }) => `
         <div class="summary-line">
-          <div class="summary-thumb">${Cart.productImage(p, 'cart-thumb')}</div>
-          <div>
-            <p class="cart-line-name">${Cart.escape(p.name)}</p>
-            <p class="variant">One of a kind</p>
+          <div class="summary-thumb">
+            ${Cart.productImage(p, 'cart-thumb')}
+            <span class="badge">${qty}</span>
           </div>
-          <p>${p.price > 0 ? Cart.formatPrice(p.price) : 'TBC'}</p>
+          <p class="cart-line-name">${Cart.escape(p.name)}</p>
+          <p>${p.price > 0 ? Cart.formatPrice(p.price * qty) : 'TBC'}</p>
         </div>`).join('');
       document.getElementById('summary-subtotal').textContent = Cart.subtotalText();
     }
@@ -242,8 +242,8 @@
         for (const k of ['address', 'city', 'region', 'postal', 'country']) delete data[k];
       }
 
-      const itemsText = Cart.lines().map(p =>
-        p.name + (p.price > 0 ? ` — ${Cart.formatPrice(p.price)}` : '')
+      const itemsText = Cart.lines().map(({ product: p, qty }) =>
+        `${qty} × ${p.name}` + (p.price > 0 ? ` — ${Cart.formatPrice(p.price * qty)}` : '')
       ).join('\n');
 
       const payload = {

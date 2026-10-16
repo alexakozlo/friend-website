@@ -20,11 +20,11 @@ Every push to the `main` branch automatically updates the live site within about
   small uppercase labels with wide letter-spacing, lots of white space, square product photos.
 - Subtle moon/astrology touches (crescent logo, moon-phase divider). Keep them understated.
 - Brand colors and fonts live in the `:root` block at the top of `style.css`.
-- Product photos go in `images/` and are linked from `products.js` (`image: 'images/name.jpg'`).
+- Product photos go in `images/` and are linked from `products.js`: `cover` is a square crop of the bag for the shop grid and cart (crop close on the bag at a similar size to the other covers so the grid flows), and `photos` are the full photos shown in the pop-up. Resize photos to about 1200px wide before adding them.
 
 ## Shop, cart and checkout
-- Every bag is one of a kind: no colour options or quantities, and the cart holds at most one of each bag.
-- `products.js` is the single list of bags (name, price, description, photo, `sold`) plus `ORDER_EMAIL`. The shop grid, bag details pop-up, cart and checkout all read from it. To add, remove or change a bag, edit only this file. When a bag sells, set `sold: true` (it stays on the site marked "Sold").
+- Bags are made in small batches (not one of a kind): no colour options; each bag has a `stock` count and the cart never allows more than that. Stock does not go down automatically after an order; lower it by hand in `products.js`.
+- `products.js` is the single list of bags (name, price, description, photo, `stock`) plus `ORDER_EMAIL`. The shop grid, bag details pop-up, cart and checkout all read from it. To add, remove or change a bag, edit only this file. At `stock: 0` a bag stays on the site marked "Sold".
 - `cart.js` draws the shop grid, the bag details pop-up (opens when a bag is clicked), runs the slide-out cart drawer and saves the cart in the browser (localStorage) so it carries between pages.
 - `checkout.html` is the checkout form. Orders are emailed to `ORDER_EMAIL` through FormSubmit.co (free, no account). The first order after changing the email triggers an activation email that must be clicked once.
 - No payment is taken online (owner's choice for now); the owner emails the customer to confirm and arrange payment.
