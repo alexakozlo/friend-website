@@ -19,7 +19,7 @@ content:
         label: Bag name
         type: string
         required: true
-        description: Shown on the shop, e.g. "The Ivory Knot Bag".
+        description: Used in the cart and order emails, e.g. "The Ivory Knot Bag". The shop shows bags as numbers (01, 02...) in the order they are listed here.
       - name: price
         label: Price ($)
         type: number
@@ -27,7 +27,7 @@ content:
       - name: stock
         label: In stock
         type: number
-        description: How many are available. Lower this after each sale. At 0 the bag shows as "Sold".
+        description: How many are available. Lower this after each sale. At 0 the price is replaced by "Sold out". Set it back up when you restock.
       - name: description
         label: Description
         type: text
