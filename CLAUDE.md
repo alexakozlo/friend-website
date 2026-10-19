@@ -31,4 +31,4 @@ Every push to the `main` branch automatically updates the live site within about
 - `cart.js` draws the shop grid, the bag details pop-up (opens when a bag is clicked), runs the slide-out cart drawer and saves the cart in the browser (localStorage) so it carries between pages.
 - `checkout.html` is the checkout form. Orders are emailed to `ORDER_EMAIL` through FormSubmit.co (free, no account). The first order after changing the email triggers an activation email that must be clicked once.
 - No payment is taken online (owner's choice for now); the owner emails the customer to confirm and arrange payment.
-- Brand domain: moon-made.ca (not connected to GitHub Pages yet). Contact/order email: info@moon-made.ca.
+- Live site: https://moon-made.ca (custom domain on GitHub Pages, set by the `CNAME` file; keep that file). Contact/order email: info@moon-made.ca.

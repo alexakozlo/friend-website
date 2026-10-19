@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout — MoonMade</title>
   <meta name="description" content="Checkout — MoonMade handmade bags.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M20 4a12 12 0 1 0 8 20A10 10 0 0 1 20 4z' fill='%231c1c1c'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M12 4a12 12 0 1 1 -8 20A10 10 0 0 0 12 4z' fill='%231c1c1c'/></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Reusable crescent moon shape -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <symbol id="moon" viewBox="0 0 32 32"><path d="M20 4a12 12 0 1 0 8 20A10 10 0 0 1 20 4z"/></symbol>
+    <symbol id="moon" viewBox="0 0 32 32"><path d="M12 4a12 12 0 1 1 -8 20A10 10 0 0 0 12 4z"/></symbol>
   </svg>
 
-  <div class="announcement">Handmade in small batches &nbsp;☾&nbsp; Made from upcycled materials</div>
+  <div class="announcement">Handmade in small batches &nbsp;☽&nbsp; Made from upcycled materials</div>
 
   <header class="site-header">
     <div class="container nav">
@@ -23,7 +23,7 @@
         <a href="index.html#about">About</a>
       </nav>
       <a href="index.html" class="logo" aria-label="MoonMade home">
-        <svg class="logo-moon"><use href="#moon"/></svg>MOONMADE
+        MOONMADE<svg class="logo-moon"><use href="#moon"/></svg>
       </a>
       <nav class="nav-right">
         <a href="index.html#contact">Contact</a>
@@ -145,7 +145,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div>
-        <a href="index.html" class="logo small"><svg class="logo-moon"><use href="#moon"/></svg>MOONMADE</a>
+        <a href="index.html" class="logo small">MOONMADE<svg class="logo-moon"><use href="#moon"/></svg></a>
         <p class="footer-text">Handmade bags, made under the moon.</p>
       </div>
       <div>
@@ -195,7 +195,7 @@
             ${Cart.productImage(p, 'cart-thumb')}
             <span class="badge">${qty}</span>
           </div>
-          <p class="cart-line-name">${Cart.escape(p.name)}</p>
+          <p class="cart-line-name">${p.number}</p>
           <p>${p.price > 0 ? Cart.formatPrice(p.price * qty) : 'TBC'}</p>
         </div>`).join('');
       document.getElementById('summary-subtotal').textContent = Cart.subtotalText();
@@ -243,7 +243,7 @@
       }
 
       const itemsText = Cart.lines().map(({ product: p, qty }) =>
-        `${qty} × ${p.name}` + (p.price > 0 ? ` — ${Cart.formatPrice(p.price * qty)}` : '')
+        `${qty} × No. ${p.number} (${p.name})` + (p.price > 0 ? ` — ${Cart.formatPrice(p.price * qty)}` : '')
       ).join('\n');
 
       const payload = {

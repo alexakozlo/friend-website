@@ -1,13 +1,13 @@
 /* ---- Brand colors & fonts: change these to restyle the whole site ---- */
 :root {
   --color-bg: #ffffff;
-  --color-alt-bg: #f4f2ef;
+  --color-alt-bg: #ffffff;
   --color-text: #1c1c1c;
   --color-muted: #6b6560;
   --color-border: #dddddd;
-  --color-placeholder: #ebe8e4;
+  --color-placeholder: #f2f2f2;
   --font-serif: "Times New Roman", Times, serif;
-  --font-sans: "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Times New Roman", Times, serif;
   --max-width: 1280px;
 }
 
@@ -90,26 +90,24 @@ nav a:hover { opacity: 0.6; }
 
 /* ---- Hero ---- */
 .hero {
-  min-height: min(72vh, 680px);
+  min-height: min(78vh, 720px);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   padding: 80px 24px;
-  background:
-    radial-gradient(circle at 50% 50%, #fbfaf8 0 190px, transparent 191px),
-    radial-gradient(circle at 50% 50%, #efece7 0 30%, var(--color-alt-bg) 70%);
+  background: #000;
+  color: #fff;
 }
-.hero h1 {
-  font-size: clamp(2.6rem, 7vw, 5rem);
-  line-height: 1.05;
-  margin: 12px 0 20px;
-}
-.hero-text {
-  color: var(--color-muted);
-  font-size: 1.1rem;
-  margin: 0 auto 36px;
-  max-width: 420px;
+.hero-title { margin: 0 0 40px; line-height: 0; }
+/* The full moon photo */
+.hero-moon {
+  width: 120px; /* half the photo's size, so it stays crisp on sharp screens */
+  height: auto;
+  mix-blend-mode: screen; /* lets the photo's black sky melt into the background */
+  /* fade out the photo's square edges so only the moon shows */
+  -webkit-mask-image: radial-gradient(circle closest-side, #000 76%, transparent 90%);
+  mask-image: radial-gradient(circle closest-side, #000 76%, transparent 90%);
 }
 
 .button {
@@ -121,28 +119,12 @@ nav a:hover { opacity: 0.6; }
   transition: opacity 0.2s;
 }
 .button:hover { opacity: 0.8; }
-
-/* ---- Moon phases divider ---- */
-.phases {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  padding: 36px 16px;
-  border-bottom: 1px solid var(--color-border);
+.button-light {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #fff;
 }
-.phase {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 1px solid var(--color-text);
-}
-.p-full { background: var(--color-text); }
-.p-half { background: linear-gradient(90deg, transparent 50%, var(--color-text) 50%); }
-.p-crescent { box-shadow: inset -4px 0 0 var(--color-text); }
-.p-gibbous { box-shadow: inset -8px 0 0 var(--color-text); }
-.p-half.r { background: linear-gradient(90deg, var(--color-text) 50%, transparent 50%); }
-.p-crescent.r { box-shadow: inset 4px 0 0 var(--color-text); }
-.p-gibbous.r { box-shadow: inset 8px 0 0 var(--color-text); }
+.button-light:hover { background: #fff; color: #000; opacity: 1; }
 
 /* ---- Sections ---- */
 .section { padding: 96px 0; }
@@ -156,6 +138,7 @@ nav a:hover { opacity: 0.6; }
   margin-bottom: 40px;
 }
 .section-head h2 { margin: 0; }
+.section-head .eyebrow { margin: 0 0 0 auto; }
 
 /* ---- Product grid ---- */
 .products {
@@ -182,9 +165,24 @@ nav a:hover { opacity: 0.6; }
 }
 .placeholder svg { width: 22%; height: 22%; fill: #d6d1ca; }
 
-.product-info { padding-top: 16px; text-align: center; }
-.product-info h3 { line-height: 1.3; }
-.product-info h3 { font-size: 1.05rem; margin: 0 0 4px; }
+.product-info { padding-top: 14px; }
+/* Name on the left, price on the right, small with wide spacing */
+.product-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.product-row h3,
+.product-row .price {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.14em;
+}
+.product-row .price { flex-shrink: 0; color: var(--color-muted); }
+.product-row .price.sold-label { font-size: 0.7rem; }
 .price { margin: 0; font-size: 0.95rem; }
 .variant {
   margin: 4px 0 0;
@@ -200,14 +198,51 @@ nav a:hover { opacity: 0.6; }
   color: var(--color-muted);
 }
 
-/* ---- About & Contact ---- */
-.about, .contact {
+/* ---- Photo collage (full width, same height as the moon landing) ---- */
+.collage {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1.1fr 0.9fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+  height: min(78vh, 720px);
+  padding-top: 6px;
+}
+.collage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  background: #000;
+}
+.c-tiles { grid-column: 1; grid-row: 1 / 3; }
+.c-halo { grid-column: 2; grid-row: 1; }
+.c-red-moon { grid-column: 2; grid-row: 2; object-position: 58% 59%; }
+.c-wall { grid-column: 3; grid-row: 1 / 3; }
+.c-moonlight { grid-column: 4; grid-row: 1 / 3; object-position: 50% 60%; }
+
+/* ---- About ---- */
+.about-split {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 56px;
+  align-items: stretch;
+}
+.about-text { display: flex; flex-direction: column; }
+.about-note { max-width: 34em; }
+.about-note p { margin: 0 0 16px; color: var(--color-muted); font-size: 1rem; }
+.about-note .signoff { color: var(--color-text); }
+.about-photo { margin: 0; }
+.about-photo img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; filter: grayscale(1); }
+
+/* ---- Contact ---- */
+.contact {
   max-width: 620px;
   text-align: center;
 }
-.about p:not(.eyebrow), .contact p:not(.eyebrow) { color: var(--color-muted); font-size: 1.08rem; }
-.about-moon { width: 28px; height: 28px; fill: var(--color-text); }
+.contact p:not(.eyebrow) { color: var(--color-muted); font-size: 1.08rem; }
 .contact a { color: var(--color-text); }
+.about-moon { width: 28px; height: 28px; fill: var(--color-text); }
 
 /* ---- Order page ---- */
 .checkout { max-width: 1100px; }
@@ -320,39 +355,43 @@ nav a.cart-link { color: var(--color-text); }
   cursor: pointer;
 }
 .product-view:hover .product-img { opacity: 0.85; }
+/* "+" that appears in the bottom-right corner of the photo on hover */
+.product-media { position: relative; }
+.quick-add {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 1.3rem;
+  line-height: 34px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.product:hover .quick-add,
+.quick-add:focus-visible { opacity: 1; }
+.quick-add:hover { background: var(--color-text); color: var(--color-bg); }
+/* Phones and tablets have no hover, so the "+" is always shown there */
+@media (hover: none) { .quick-add { opacity: 1; } }
 .product-name {
   background: none;
   border: 0;
   padding: 0;
   font: inherit;
   color: inherit;
+  letter-spacing: inherit;
+  text-align: left;
   cursor: pointer;
 }
 .product-name:hover { opacity: 0.6; }
-.add-link {
-  margin-top: 10px;
-  font-family: var(--font-sans);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-}
 .is-sold .product-img { opacity: 0.55; }
-.sold-tag {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  padding: 5px 10px;
-  background: var(--color-bg);
-  font-family: var(--font-sans);
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-}
-.stock-note {
-  margin: 2px 0 0;
-  font-size: 0.85rem;
-  color: var(--color-muted);
-}
 .sold-label {
   margin: 10px 0 0;
   font-family: var(--font-sans);
@@ -361,6 +400,7 @@ nav a.cart-link { color: var(--color-text); }
   letter-spacing: 0.16em;
   color: var(--color-muted);
 }
+.price.sold-label { margin: 0; }
 
 /* ---- Bag details pop-up ---- */
 .bag-dialog {
@@ -538,6 +578,7 @@ nav a.cart-link { color: var(--color-text); }
   position: sticky;
   top: 110px;
   background: var(--color-alt-bg);
+  border: 1px solid var(--color-border);
   padding: 28px;
 }
 .order-summary > .eyebrow { margin: 0 0 8px; }
@@ -599,9 +640,17 @@ nav a.cart-link { color: var(--color-text); }
 /* ---- Mobile ---- */
 @media (max-width: 800px) {
   .products { grid-template-columns: repeat(2, 1fr); gap: 36px 16px; }
+  .product-row h3, .product-row .price { font-size: 0.74rem; letter-spacing: 0.08em; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .checkout-grid { grid-template-columns: 1fr; gap: 40px; }
   .order-summary { position: static; order: -1; }
+  .collage { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 1fr); height: 150vw; max-height: 900px; }
+  .c-tiles { grid-column: 1; grid-row: 1 / 3; }
+  .c-halo { grid-column: 2; grid-row: 1; }
+  .c-red-moon { grid-column: 2; grid-row: 2; }
+  .c-wall { grid-column: 1; grid-row: 3; }
+  .c-moonlight { grid-column: 2; grid-row: 3; }
+  .about-split { grid-template-columns: 1fr; gap: 40px; }
 }
 @media (max-width: 600px) {
   .nav { grid-template-columns: 1fr; justify-items: center; gap: 14px; }
@@ -611,7 +660,6 @@ nav a.cart-link { color: var(--color-text); }
   .nav-right a { margin: 0 12px; }
   .section { padding: 64px 0; }
   .section-head { flex-direction: column; gap: 4px; }
-  .phases { gap: 10px; }
   .field-row, .field-row.three { grid-template-columns: 1fr; }
   .bag-detail { grid-template-columns: 1fr; }
   .bag-detail-info { padding: 28px 24px 32px; }

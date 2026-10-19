@@ -26,6 +26,7 @@ const Cart = (() => {
       ...raw,
       id: raw.id || slug(raw.name) || 'bag-' + n,
       name: raw.name || 'Untitled bag',
+      number: String(n + 1).padStart(2, '0'), // shown on the site instead of the name: 01, 02, ...
       price: Number(raw.price) || 0,
       stock: Number(raw.stock) || 0,
       photos: [].concat(raw.photos || []).filter(Boolean).map(cleanPath),
@@ -159,18 +160,24 @@ const Cart = (() => {
     return items.map(i => ({ ...i, product: findProduct(i.id) }));
   }
 
-  // "Only 1 left", "2 left" or "Sold"
-  function stockText(p) {
-    const n = stockOf(p);
-    if (n === 0) return 'Sold';
-    return n === 1 ? 'Only 1 left' : `${n} left`;
+  // The price, or "Sold out" once stock reaches 0
+  function priceHTML(p) {
+    return stockOf(p) === 0
+      ? '<p class="price sold-label">Sold out</p>'
+      : `<p class="price">${formatPrice(p.price)}</p>`;
   }
 
-  // The small action under a bag: add it, show they're all in the cart, or mark it sold
+  // The small action under a bag: add it, or show they're all in the cart (nothing once sold out)
   function actionHTML(p, className) {
-    if (stockOf(p) === 0) return `<p class="sold-label">Sold</p>`;
+    if (stockOf(p) === 0) return '';
     if (qtyInCart(p.id) >= stockOf(p)) return `<button type="button" class="${className}" data-cart-open>In your cart</button>`;
     return `<button type="button" class="${className}" data-add="${p.id}">Add to cart</button>`;
+  }
+
+  // The small "+" in the corner of a bag photo (only while more can be added)
+  function quickAddHTML(p) {
+    if (stockOf(p) === 0 || qtyInCart(p.id) >= stockOf(p)) return '';
+    return `<button type="button" class="quick-add" data-add="${p.id}" aria-label="Add ${escape(p.name)} to cart">+</button>`;
   }
 
   // ---- Shop grid ----
@@ -179,15 +186,17 @@ const Cart = (() => {
     if (!grid) return;
     grid.innerHTML = PRODUCTS.map(p => `
       <article class="product${stockOf(p) === 0 ? ' is-sold' : ''}">
-        <button type="button" class="product-view" data-view="${p.id}" aria-label="View ${escape(p.name)}">
-          ${productImage(p, 'product-img')}
-          ${stockOf(p) === 0 ? '<span class="sold-tag">Sold</span>' : ''}
-        </button>
+        <div class="product-media">
+          <button type="button" class="product-view" data-view="${p.id}" aria-label="View ${escape(p.name)}">
+            ${productImage(p, 'product-img')}
+          </button>
+          ${quickAddHTML(p)}
+        </div>
         <div class="product-info">
-          <h3><button type="button" class="product-name" data-view="${p.id}">${escape(p.name)}</button></h3>
-          <p class="price">${formatPrice(p.price)}</p>
-          ${stockOf(p) > 0 ? `<p class="stock-note">${stockText(p)}</p>` : ''}
-          ${actionHTML(p, 'link-btn add-link')}
+          <div class="product-row">
+            <h3><button type="button" class="product-name" data-view="${p.id}" aria-label="${escape(p.name)}">${p.number}</button></h3>
+            ${priceHTML(p)}
+          </div>
         </div>
       </article>`).join('');
   }
@@ -212,13 +221,11 @@ const Cart = (() => {
       ${galleryHTML(p, Number(dialog.dataset.photo) || 0)}
       <div class="bag-detail-info">
         <p class="eyebrow">Small batch</p>
-        <h2>${escape(p.name)}</h2>
-        <p class="price">${formatPrice(p.price)}</p>
+        <h2>${p.number}</h2>
+        ${priceHTML(p)}
         <p class="bag-description">${escape(p.description || '')}</p>
-        ${stockOf(p) === 0
-          ? '<p class="sold-label">Sold out</p>'
-          : actionHTML(p, 'button add-btn')}
-        <p class="bag-note">Made by hand in small batches.${stockOf(p) > 0 ? ` ${stockText(p)}.` : ''}</p>
+        ${actionHTML(p, 'button add-btn')}
+        <p class="bag-note">Made by hand in small batches.</p>
       </div>`;
   }
 
@@ -256,7 +263,7 @@ const Cart = (() => {
       <div class="cart-line">
         ${productImage(p, 'cart-thumb')}
         <div class="cart-line-info">
-          <p class="cart-line-name">${escape(p.name)}</p>
+          <p class="cart-line-name">${p.number}</p>
           <div class="qty">
             <button type="button" data-qty="-1" data-id="${p.id}" aria-label="Decrease quantity">&minus;</button>
             <span>${qty}</span>

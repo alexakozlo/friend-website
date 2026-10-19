@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MoonMade</title>
   <meta name="description" content="MoonMade — handbags made by hand in small batches by Jess Kowalski, from quality upcycled materials.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M20 4a12 12 0 1 0 8 20A10 10 0 0 1 20 4z' fill='%231c1c1c'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M12 4a12 12 0 1 1 -8 20A10 10 0 0 0 12 4z' fill='%231c1c1c'/></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <!-- Reusable crescent moon shape -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <symbol id="moon" viewBox="0 0 32 32"><path d="M20 4a12 12 0 1 0 8 20A10 10 0 0 1 20 4z"/></symbol>
+    <symbol id="moon" viewBox="0 0 32 32"><path d="M12 4a12 12 0 1 1 -8 20A10 10 0 0 0 12 4z"/></symbol>
   </svg>
 
-  <div class="announcement">Handmade in small batches &nbsp;☾&nbsp; Made from upcycled materials</div>
+  <div class="announcement">Handmade in small batches &nbsp;☽&nbsp; Made from upcycled materials</div>
 
   <header class="site-header">
     <div class="container nav">
@@ -23,7 +23,7 @@
         <a href="#about">About</a>
       </nav>
       <a href="#" class="logo" aria-label="MoonMade home">
-        <svg class="logo-moon"><use href="#moon"/></svg>MOONMADE
+        MOONMADE<svg class="logo-moon"><use href="#moon"/></svg>
       </a>
       <nav class="nav-right">
         <a href="#contact">Contact</a>
@@ -36,49 +36,48 @@
   <main>
     <section class="hero">
       <div class="hero-inner">
-        <p class="eyebrow">Handmade bags</p>
-        <h1>Made under the moon</h1>
-        <p class="hero-text">Unique handbags, made by hand in small batches from quality upcycled materials.</p>
-        <a href="#shop" class="button">Shop the bags</a>
+        <h1 class="hero-title"><img src="images/moon-o.jpg" alt="MoonMade" class="hero-moon"></h1>
+        <a href="#shop" class="button button-light">Shop now</a>
       </div>
     </section>
 
-    <!-- Moon phase divider -->
-    <div class="phases" aria-hidden="true">
-      <span class="phase p-new"></span>
-      <span class="phase p-crescent"></span>
-      <span class="phase p-half"></span>
-      <span class="phase p-gibbous"></span>
-      <span class="phase p-full"></span>
-      <span class="phase p-gibbous r"></span>
-      <span class="phase p-half r"></span>
-      <span class="phase p-crescent r"></span>
-      <span class="phase p-new"></span>
-    </div>
+    <section id="about" class="section">
+      <div class="container about-split">
+        <div class="about-text">
+          <div class="about-note">
+            <p>Welcome to moonmade.</p>
+            <p>I’m Jess Kowalski, the founder and creative heart behind moonmade. A vision three years in the making, inspired by the romance of Paris, the unexpected, and the art of finding beauty in what already exists.</p>
+            <p>Created in Canada, with a European sensibility, moonmade is an exploration of unique fabrics, thoughtful design, and pieces reimagined for a second life. Each creation is guided by an appreciation for the timeless, the whimsical, and the quietly extraordinary.</p>
+            <p class="signoff">All my love,<br><em>Jess</em></p>
+            <p class="signoff"><em>The moon knows.</em></p>
+          </div>
+        </div>
+        <figure class="about-photo">
+          <img src="images/jess.jpg" alt="Jess Kowalski sitting on old stone steps holding the Stardust Bag" loading="lazy">
+        </figure>
+      </div>
+    </section>
 
     <section id="shop" class="section">
       <div class="container">
         <div class="section-head">
-          <h2>The Bags</h2>
           <p class="eyebrow">Collection 01</p>
         </div>
 
         <!-- The bags are listed in products.json -->
         <div class="products" id="product-grid"></div>
 
-        <p class="shop-note">Every MoonMade bag is made by hand in small batches, with only a few of each.<br>Once they're gone, they're gone.</p>
+        <p class="shop-note">Made by hand in small quantities, each piece is a little world of its own.<br>Beneath the moonlight, an incense is lit for every bag before it finds its way to you.</p>
       </div>
     </section>
 
-    <section id="about" class="section alt">
-      <div class="container about">
-        <svg class="about-moon"><use href="#moon"/></svg>
-        <p class="eyebrow">About</p>
-        <h2>Meet the maker</h2>
-        <p>Welcome to MoonMade, I'm so happy you're here! I'm Jess Kowalski, and I make every bag you see here myself. I studied at fashion school in Italy, where I learned to make pieces with real care and quality, and I've loved it ever since.</p>
-        <p>I use good-quality upcycled materials and give them a sweet second life, and make each design in small batches, so there are only ever a few of each. Each one is made slowly, by hand, with a lot of love.</p>
-        <p>I hope you find one that feels like it was made just for you. ☾ Jess</p>
-      </div>
+    <!-- Photo collage: photos only, same size as the moon landing -->
+    <section class="collage" aria-label="MoonMade mood photos">
+      <img class="c-tiles" src="images/collage-tiles.jpg" alt="Black pointed boots on a white hexagon tile floor">
+      <img class="c-halo" src="images/collage-halo.jpg" alt="A soft golden halo of light">
+      <img class="c-red-moon" src="images/collage-red-moon.jpg" alt="A red moon in a black sky">
+      <img class="c-wall" src="images/collage-stone-wall.jpg" alt="An old stone wall between two barred windows">
+      <img class="c-moonlight" src="images/collage-moonlight.jpg" alt="Moonlight reflected on dark water">
     </section>
 
     <section id="contact" class="section">
@@ -96,7 +95,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div>
-        <a href="#" class="logo small"><svg class="logo-moon"><use href="#moon"/></svg>MOONMADE</a>
+        <a href="#" class="logo small">MOONMADE<svg class="logo-moon"><use href="#moon"/></svg></a>
         <p class="footer-text">Handmade bags, made under the moon.</p>
       </div>
       <div>
